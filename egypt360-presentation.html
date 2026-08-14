@@ -1,688 +1,2911 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="is-loading">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Egypt 360 — Presentation</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg-deep:#070a12;
-    --bg-panel:#0d1220;
-    --bg-panel-2:#111828;
-    --gold:#d4af37;
-    --gold-bright:#e9c766;
-    --gold-deep:#8a6a1f;
-    --ivory:#f3efe2;
-    --muted:#8891a6;
-    --line: rgba(212,175,55,0.18);
-    --serif: 'Marcellus', serif;
-    --sans: 'Jost', sans-serif;
-    --body: 'Inter', sans-serif;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Egypt 360 — Presentation</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='49' fill='none' stroke='%23d6a84f' stroke-width='6'/%3E%3Ctext x='50' y='55' font-family='serif' font-size='58' font-weight='bold' fill='%23d6a84f' text-anchor='middle' dominant-baseline='middle'%3EE%3C/text%3E%3C/svg%3E"
+    type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #070a12;
+      --bg-panel: #0d1220;
+      --bg-panel-2: #111828;
+      --gold: #d4af37;
+      --gold-bright: #e9c766;
+      --gold-deep: #8a6a1f;
+      --ivory: #f3efe2;
+      --muted: #8891a6;
+      --line: rgba(212, 175, 55, 0.18);
+      --serif: 'Marcellus', serif;
+      --sans: 'Jost', sans-serif;
+      --body: 'Inter', sans-serif;
+    }
 
-  *{margin:0;padding:0;box-sizing:border-box;}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  html{scroll-behavior:smooth;}
+    html {
+      scroll-behavior: smooth;
+    }
 
-  body{
-    background:var(--bg-deep);
-    color:var(--ivory);
-    font-family:var(--body);
-    overflow-x:hidden;
-  }
+    body {
+      background: var(--bg-deep);
+      color: var(--ivory);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
 
-  @media (prefers-reduced-motion: reduce){
-    html{scroll-behavior:auto;}
-    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
-  }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
 
-  ::selection{background:var(--gold); color:#0a0e18;}
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
 
-  /* ---------- ambient texture ---------- */
-  .grain{
-    position:fixed; inset:0; pointer-events:none; z-index:1; opacity:0.035; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+    ::selection {
+      background: var(--gold);
+      color: #0a0e18;
+    }
 
-  .vignette{
-    position:fixed; inset:0; pointer-events:none; z-index:1;
-    background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
-  }
+    /* ---------- loading screen ---------- */
+    html.is-loading,
+    html.is-loading body {
+      overflow: hidden;
+      height: 100%;
+    }
 
-  /* ---------- progress bar ---------- */
-  .progress{
-    position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright));
-    z-index:60; width:0%; transition:width 0.1s linear;
-  }
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: var(--bg-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .9s ease, visibility .9s ease;
+    }
 
-  /* ---------- dot nav ---------- */
-  .dotnav{
-    position:fixed; right:clamp(16px,3vw,40px); top:50%; transform:translateY(-50%);
-    z-index:50; display:flex; flex-direction:column; gap:16px;
-  }
-  .dotnav button{
-    width:8px; height:8px; border-radius:50%; border:1px solid var(--gold-deep);
-    background:transparent; cursor:pointer; padding:0; position:relative; transition:all .35s ease;
-  }
-  .dotnav button::after{
-    content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%);
-    font-family:var(--sans); font-size:11px; letter-spacing:0.08em; color:var(--muted);
-    white-space:nowrap; opacity:0; transition:opacity .25s ease; pointer-events:none;
-  }
-  .dotnav button:hover::after{opacity:1;}
-  .dotnav button.active{background:var(--gold); border-color:var(--gold); box-shadow:0 0 10px rgba(212,175,55,0.6);}
+    .loader.loader-hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-  @media (max-width:820px){ .dotnav{display:none;} }
+    .loader-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  /* ---------- step nav (prev/next) ---------- */
-  .stepper{
-    position:fixed; right:clamp(16px,3vw,40px); bottom:clamp(20px,4vw,40px);
-    z-index:50; display:flex; flex-direction:column; gap:10px;
-  }
-  .stepper button{
-    width:38px; height:38px; border-radius:50%; border:1px solid var(--gold-deep);
-    background:rgba(7,10,18,0.55); backdrop-filter:blur(4px); cursor:pointer;
-    color:var(--gold); font-family:var(--sans); font-size:15px; line-height:1;
-    display:flex; align-items:center; justify-content:center;
-    transition:all .3s ease;
-  }
-  .stepper button:hover{ background:var(--gold); color:var(--bg-deep); box-shadow:0 4px 18px rgba(212,175,55,0.35); }
-  .stepper button:disabled{ opacity:0.25; cursor:default; }
-  .stepper button:disabled:hover{ background:rgba(7,10,18,0.55); color:var(--gold); box-shadow:none; }
+    .loader-halo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 340px;
+      height: 340px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.16) 0%, rgba(212, 175, 55, 0.05) 42%, transparent 72%);
+      animation: haloBreathe 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
 
-  @media (max-width:820px){ .stepper{ right:16px; bottom:16px; } }
+    @keyframes haloBreathe {
 
-  /* ---------- sections ---------- */
-  section{
-    min-height:100vh; width:100%; position:relative;
-    display:flex; align-items:center;
-    padding: clamp(32px,8vw,120px) clamp(24px,7vw,96px);
-    z-index:2;
-    border-bottom:1px solid var(--line);
-  }
+      0%,
+      100% {
+        opacity: 0.55;
+        transform: translate(-50%, -50%) scale(0.92);
+      }
 
-  .eyebrow{
-    font-family:var(--sans); font-weight:500; font-size:12.5px; letter-spacing:0.28em; text-transform:uppercase;
-    color:var(--gold); display:flex; align-items:center; gap:14px; margin-bottom:22px;
-    opacity:0; transform:translateY(14px); transition:opacity .7s ease, transform .7s ease;
-  }
-  .eyebrow::before{content:""; width:34px; height:1px; background:var(--gold-deep);}
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.06);
+      }
+    }
 
-  .in-view .eyebrow{opacity:1; transform:translateY(0);}
+    .loader-emblem {
+      position: relative;
+      width: 280px;
+      height: 280px;
+    }
 
-  h1,h2{
-    font-family:var(--serif); font-weight:400; line-height:1.06; letter-spacing:-0.01em;
-    color:var(--ivory);
-  }
+    .loader-emblem svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
 
-  .reveal-line{ overflow:hidden; }
-  .reveal-line span{
-    display:block; transform:translateY(105%); transition:transform .9s cubic-bezier(.19,1,.22,1);
-  }
-  .in-view .reveal-line span{ transform:translateY(0); }
-  .reveal-line:nth-child(1) span{transition-delay:.05s;}
-  .reveal-line:nth-child(2) span{transition-delay:.16s;}
+    .e-base {
+      opacity: 0;
+      animation: eBaseIn .6s ease forwards .05s;
+    }
 
-  .gold-word{ color:var(--gold-bright); font-style:italic; }
+    @keyframes eBaseIn {
+      to {
+        opacity: 1;
+      }
+    }
 
-  .body-text{
-    font-family:var(--body); font-weight:300; font-size:clamp(15px,1.6vw,18px); line-height:1.75;
-    color:var(--muted); max-width:560px; margin-top:26px;
-    opacity:0; transform:translateY(14px); transition:opacity .8s ease .3s, transform .8s ease .3s;
-  }
-  .in-view .body-text{opacity:1; transform:translateY(0);}
+    .loader-caption {
+      margin-top: 26px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      padding-left: 0.42em;
+      /* offsets letter-spacing so text optically centers */
+      opacity: 0;
+      transform: translateY(6px);
+      animation: captionIn .9s cubic-bezier(.19, 1, .22, 1) forwards 1.5s;
+    }
 
-  /* ---------- section 1 : scroll-expansion hero ---------- */
-  html.hero-locked, html.hero-locked body{ overflow:hidden; height:100%; }
+    @keyframes captionIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-  .hero-expand{
-    padding:0; border-bottom:1px solid var(--line); overflow:hidden;
-    min-height:100vh; height:100vh; position:relative; justify-content:center;
-  }
-  .hero-bg{ position:absolute; inset:0; z-index:0; will-change:opacity; }
-  .hero-bg img{ width:100%; height:100%; object-fit:cover; filter:brightness(0.5) saturate(1.05); }
-  .hero-bg::after{
-    content:""; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(7,10,18,0.35), rgba(7,10,18,0.92) 92%);
-  }
+    .loader-rule {
+      margin-top: 14px;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: ruleGrow 1.1s ease forwards 1.75s;
+    }
 
-  .hero-stage{ position:relative; width:100%; height:100%; z-index:2; }
+    @keyframes ruleGrow {
+      to {
+        width: 120px;
+      }
+    }
 
-  .hero-eyebrow-fixed{
-    position:absolute; top:clamp(28px,6vw,54px); left:50%; transform:translateX(-50%);
-    font-family:var(--sans); letter-spacing:0.28em; font-size:12px; color:var(--gold);
-    text-transform:uppercase; display:flex; align-items:center; gap:14px; white-space:nowrap;
-  }
-  .hero-eyebrow-fixed::before, .hero-eyebrow-fixed::after{ content:""; width:26px; height:1px; background:var(--gold-deep); }
+    /* ---------- ambient texture ---------- */
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.035;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
 
-  .hero-title-row{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    display:flex; align-items:baseline; z-index:3; pointer-events:none; white-space:nowrap;
-  }
-  .hero-title-row h1{
-    font-family:var(--serif); font-weight:400; letter-spacing:0.01em; color:var(--ivory);
-    font-size:clamp(46px,9vw,140px); line-height:1; will-change:transform;
-  }
-  .hero-title-row .word-left{ text-align:right; }
-  .hero-title-row .word-right{ color:var(--gold-bright); font-style:italic; }
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+    }
 
-  .hero-media{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:300px; height:380px; border-radius:5px; overflow:hidden; z-index:2;
-    box-shadow:0 30px 90px rgba(0,0,0,0.55); will-change:width,height;
-  }
-  .hero-media img, .hero-media video{ width:100%; height:100%; object-fit:cover; filter:saturate(1.05) contrast(1.05) brightness(0.92); }
-  .hero-media iframe{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:160%; height:160%; border:0; pointer-events:none;
-  }
-  .hero-media .frame-rim{
-    position:absolute; inset:0; box-shadow: inset 0 0 70px 14px rgba(7,10,18,0.7);
-    background:linear-gradient(180deg, rgba(212,175,55,0.10), transparent 40%, transparent 60%, rgba(7,10,18,0.4));
-  }
+    /* ---------- progress bar ---------- */
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+      z-index: 60;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
 
-  .hero-hint{
-    position:absolute; bottom:44px; left:50%; transform:translateX(-50%); z-index:3;
-    display:flex; flex-direction:column; align-items:center; gap:8px;
-    font-family:var(--sans); font-size:10.5px; letter-spacing:0.24em; color:var(--muted); text-transform:uppercase;
-    transition:opacity .4s ease;
-  }
-  .hero-hint .line{ width:1px; height:34px; background:linear-gradient(var(--gold), transparent); animation:scrolldown 1.8s ease-in-out infinite; }
-  @keyframes scrolldown{ 0%{transform:scaleY(0); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0); transform-origin:bottom;} }
+    /* ---------- dot nav ---------- */
+    .dotnav {
+      position: fixed;
+      right: clamp(16px, 3vw, 40px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
-  .hero-reveal{
-    position:absolute; bottom:14%; left:50%; transform:translate(-50%,12px); z-index:3;
-    text-align:center; max-width:540px; padding:0 24px; opacity:0; transition:opacity .7s ease, transform .7s ease;
-  }
-  .hero-reveal.show{ opacity:1; transform:translate(-50%,0); }
-  .hero-reveal p{ font-family:var(--body); font-weight:300; color:var(--muted); font-size:clamp(14px,1.6vw,17px); line-height:1.7; }
+    .dotnav button {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-deep);
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      position: relative;
+      transition: all .35s ease;
+    }
 
-  @media (max-width:820px){
-    .hero-title-row{ flex-direction:column; align-items:center; gap:2px; }
-    .hero-title-row .word-left{ text-align:center; }
-  }
+    .dotnav button::after {
+      content: attr(data-label);
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .25s ease;
+      pointer-events: none;
+    }
 
-  /* ---------- problem section : scattered chips ---------- */
-  .problem-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:40px; width:100%; align-items:center; }
-  @media (max-width:900px){ .problem-wrap{grid-template-columns:1fr;} }
-  .chip-field{ position:relative; height:340px; }
-  .chip{
-    position:absolute; font-family:var(--sans); font-size:13px; letter-spacing:0.04em;
-    padding:10px 18px; border:1px solid var(--line); border-radius:999px; color:var(--muted);
-    background:rgba(255,255,255,0.02); backdrop-filter:blur(2px);
-    opacity:0; transition:opacity .6s ease, transform .6s ease;
-  }
-  .in-view .chip{ opacity:1; }
-  .chip1{ top:6%; left:8%; transform:rotate(-6deg); transition-delay:.1s;}
-  .chip2{ top:2%; left:48%; transform:rotate(4deg); transition-delay:.22s;}
-  .chip3{ top:34%; left:2%; transform:rotate(3deg); transition-delay:.34s;}
-  .chip4{ top:40%; left:52%; transform:rotate(-3deg); transition-delay:.46s;}
-  .chip5{ top:66%; left:14%; transform:rotate(-5deg); transition-delay:.58s;}
-  .chip6{ top:70%; left:56%; transform:rotate(5deg); transition-delay:.7s;}
-  .chip-x{ position:absolute; top:50%; left:50%; width:1px; height:60%; background:var(--line); transform:translate(-50%,-50%) rotate(20deg); }
+    .dotnav button:hover::after {
+      opacity: 1;
+    }
 
-  /* ---------- solution wordmark ---------- */
-  .solution-wrap{ width:100%; }
-  .wordmark{
-    font-family:var(--serif); font-size:clamp(48px,10vw,140px); color:transparent;
-    -webkit-text-stroke:1px var(--gold-deep); letter-spacing:0.02em; line-height:1;
-    opacity:0; transform:translateY(20px); transition:opacity 1s ease, transform 1s ease;
-    margin-top:36px;
-  }
-  .in-view .wordmark{ opacity:1; transform:translateY(0); }
+    .dotnav button.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+    }
 
-  /* ---------- objectives list ---------- */
-  .obj-list{ margin-top:36px; display:flex; flex-direction:column; max-width:640px; }
-  .obj-item{
-    display:flex; gap:22px; padding:20px 0; border-top:1px solid var(--line);
-    opacity:0; transform:translateX(-14px); transition:opacity .6s ease, transform .6s ease;
-  }
-  .in-view .obj-item{ opacity:1; transform:translateX(0); }
-  .obj-item:nth-child(1){transition-delay:.05s;} .obj-item:nth-child(2){transition-delay:.14s;}
-  .obj-item:nth-child(3){transition-delay:.23s;} .obj-item:nth-child(4){transition-delay:.32s;}
-  .obj-item:nth-child(5){transition-delay:.41s;}
-  .obj-item span.mark{ font-family:var(--serif); color:var(--gold); font-size:15px; padding-top:2px; }
-  .obj-item p{ font-family:var(--body); font-weight:300; font-size:16px; color:var(--ivory); line-height:1.5; }
-  .obj-item p b{ font-weight:500; color:var(--gold-bright); font-style:normal; }
+    @media (max-width:820px) {
+      .dotnav {
+        display: none;
+      }
+    }
 
-  /* ---------- audience cards ---------- */
-  .aud-grid{ margin-top:40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); max-width:900px; width:100%; }
-  @media (max-width:820px){ .aud-grid{grid-template-columns:repeat(2,1fr);} }
-  .aud-card{
-    background:var(--bg-deep); padding:34px 22px; text-align:left;
-    opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;
-  }
-  .in-view .aud-card{ opacity:1; transform:translateY(0); }
-  .aud-card:nth-child(1){transition-delay:.05s;} .aud-card:nth-child(2){transition-delay:.15s;}
-  .aud-card:nth-child(3){transition-delay:.25s;} .aud-card:nth-child(4){transition-delay:.35s;}
-  .aud-card .num{ font-family:var(--sans); font-size:11px; color:var(--gold-deep); letter-spacing:0.1em; }
-  .aud-card h3{ font-family:var(--serif); font-weight:400; font-size:20px; margin-top:14px; color:var(--ivory);}
+    /* ---------- step nav (prev/next) ---------- */
+    .stepper {
+      position: fixed;
+      right: clamp(16px, 3vw, 40px);
+      bottom: clamp(20px, 4vw, 40px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-  /* ---------- design section swatches ---------- */
-  .swatch-row{ display:flex; gap:14px; margin-top:38px; flex-wrap:wrap; }
-  .swatch{
-    width:64px; height:64px; border-radius:3px; position:relative; border:1px solid rgba(255,255,255,0.06);
-    opacity:0; transform:scale(.85); transition:opacity .5s ease, transform .5s ease;
-  }
-  .in-view .swatch{opacity:1; transform:scale(1);}
-  .swatch:nth-child(1){transition-delay:.05s;} .swatch:nth-child(2){transition-delay:.13s;}
-  .swatch:nth-child(3){transition-delay:.21s;} .swatch:nth-child(4){transition-delay:.29s;}
-  .swatch span{ position:absolute; bottom:-22px; left:0; font-family:var(--sans); font-size:10px; color:var(--muted); letter-spacing:0.05em; white-space:nowrap;}
+    .stepper button {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-deep);
+      background: rgba(7, 10, 18, 0.55);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .3s ease;
+    }
 
-  /* ---------- tech stack ---------- */
-  .tech-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:38px; max-width:640px; }
-  .tech-pill{
-    font-family:var(--sans); font-size:13.5px; letter-spacing:0.03em; color:var(--ivory);
-    border:1px solid var(--line); padding:12px 22px; border-radius:2px;
-    opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease;
-  }
-  .in-view .tech-pill{opacity:1; transform:translateY(0);}
-  .tech-pill:nth-child(1){transition-delay:.05s;} .tech-pill:nth-child(2){transition-delay:.13s;}
-  .tech-pill:nth-child(3){transition-delay:.21s;} .tech-pill:nth-child(4){transition-delay:.29s;}
+    .stepper button:hover {
+      background: var(--gold);
+      color: var(--bg-deep);
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+    }
 
-  /* ---------- future timeline ---------- */
-  .future-list{ margin-top:36px; max-width:620px; }
-  .future-item{
-    display:flex; align-items:baseline; gap:18px; padding:16px 0; border-top:1px solid var(--line);
-    font-family:var(--body); font-weight:300; color:var(--muted); font-size:15.5px;
-    opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease;
-  }
-  .in-view .future-item{opacity:1; transform:translateY(0);}
-  .future-item:nth-child(1){transition-delay:.05s;} .future-item:nth-child(2){transition-delay:.13s;}
-  .future-item:nth-child(3){transition-delay:.21s;} .future-item:nth-child(4){transition-delay:.29s;}
-  .future-item:nth-child(5){transition-delay:.37s;}
-  .future-item .dash{ color:var(--gold); font-family:var(--serif); }
-  .future-item b{ color:var(--ivory); font-weight:400; }
+    .stepper button:disabled {
+      opacity: 0.25;
+      cursor: default;
+    }
 
-  /* ---------- closing ---------- */
-  .closing{ flex-direction:column; align-items:flex-start; justify-content:center; border-bottom:none; }
-  .closing h2{ font-size:clamp(32px,5.5vw,64px); max-width:800px; }
-  .closing .tagline{
-    font-family:var(--sans); font-style:italic; color:var(--gold-bright); font-size:clamp(16px,2vw,20px);
-    margin-top:18px; letter-spacing:0.02em;
-    opacity:0; transform:translateY(10px); transition:opacity .7s ease .3s, transform .7s ease .3s;
-  }
-  .in-view .tagline{opacity:1; transform:translateY(0);}
-  .cta-row{ margin-top:48px; display:flex; align-items:center; gap:28px; flex-wrap:wrap;
-    opacity:0; transform:translateY(10px); transition:opacity .7s ease .5s, transform .7s ease .5s; }
-  .in-view .cta-row{opacity:1; transform:translateY(0);}
-  .cta-btn{
-    font-family:var(--sans); font-size:13px; letter-spacing:0.14em; text-transform:uppercase;
-    color:var(--bg-deep); background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright));
-    padding:17px 38px; border-radius:2px; text-decoration:none; font-weight:500;
-    transition:transform .3s ease, box-shadow .3s ease; display:inline-block;
-  }
-  .cta-btn:hover{ transform:translateY(-2px); box-shadow:0 8px 30px rgba(212,175,55,0.25); }
-  .cta-note{ font-family:var(--body); font-size:13px; color:var(--muted); }
-  .closing-foot{ margin-top:90px; font-family:var(--sans); font-size:11px; letter-spacing:0.12em; color:var(--gold-deep); text-transform:uppercase; }
+    .stepper button:disabled:hover {
+      background: rgba(7, 10, 18, 0.55);
+      color: var(--gold);
+      box-shadow: none;
+    }
 
-  /* ---------- qr code ---------- */
-  .qr-block{
-    position:absolute; right:clamp(60px,10vw,160px); bottom:clamp(50px,8vh,110px);
-    display:flex; flex-direction:column; align-items:center; gap:16px;
-    opacity:0; transform:translateY(10px); transition:opacity .7s ease .6s, transform .7s ease .6s;
-  }
-  .in-view .qr-block{ opacity:1; transform:translateY(0); }
-  .qr-block .qr-card{
-    width:clamp(200px,18vw,300px); height:clamp(200px,18vw,300px);
-    background:var(--ivory); padding:6px;
-  }
-  .qr-block .qr-card svg{ width:100%; height:100%; display:block; }
-  .qr-block .qr-caption{
-    font-family:var(--sans); font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase;
-    color:var(--muted); text-align:center;
-  }
-  @media (max-width:900px){ .qr-block{ position:static; margin-top:44px; align-items:flex-start; } }
+    @media (max-width:820px) {
+      .stepper {
+        right: 16px;
+        bottom: 16px;
+      }
+    }
 
-  .sec-index{
-    position:absolute; top:clamp(28px,6vw,64px); right:clamp(24px,7vw,96px);
-    font-family:var(--serif); font-size:13px; color:var(--gold-deep); letter-spacing:0.05em;
-  }
-</style>
+    /* ---------- sections ---------- */
+    section {
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: clamp(32px, 8vw, 120px) clamp(24px, 7vw, 96px);
+      z-index: 2;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 12.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold-deep);
+    }
+
+    .in-view .eyebrow {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h1,
+    h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      color: var(--ivory);
+    }
+
+    .reveal-line {
+      overflow: hidden;
+    }
+
+    .reveal-line span {
+      display: block;
+      transform: translateY(105%);
+      transition: transform .9s cubic-bezier(.19, 1, .22, 1);
+    }
+
+    .in-view .reveal-line span {
+      transform: translateY(0);
+    }
+
+    .reveal-line:nth-child(1) span {
+      transition-delay: .05s;
+    }
+
+    .reveal-line:nth-child(2) span {
+      transition-delay: .16s;
+    }
+
+    .gold-word {
+      color: var(--gold-bright);
+      font-style: italic;
+    }
+
+    .body-text {
+      font-family: var(--body);
+      font-weight: 300;
+      font-size: clamp(15px, 1.6vw, 18px);
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 560px;
+      margin-top: 26px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .8s ease .3s, transform .8s ease .3s;
+    }
+
+    .in-view .body-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---------- section 1 : scroll-expansion hero ---------- */
+    html.hero-locked,
+    html.hero-locked body {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .hero-expand {
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+      min-height: 100vh;
+      height: 100vh;
+      position: relative;
+      justify-content: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      will-change: opacity;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5) saturate(1.05);
+    }
+
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7, 10, 18, 0.35), rgba(7, 10, 18, 0.92) 92%);
+    }
+
+    .hero-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .hero-eyebrow-fixed {
+      position: absolute;
+      top: clamp(28px, 6vw, 54px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--sans);
+      letter-spacing: 0.28em;
+      font-size: 12px;
+      color: var(--gold);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+    }
+
+    .hero-eyebrow-fixed::before,
+    .hero-eyebrow-fixed::after {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: var(--gold-deep);
+    }
+
+    .hero-title-row {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: baseline;
+      z-index: 3;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .hero-title-row h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--ivory);
+      font-size: clamp(46px, 9vw, 140px);
+      line-height: 1;
+      will-change: transform;
+    }
+
+    .hero-title-row .word-left {
+      text-align: right;
+    }
+
+    .hero-title-row .word-right {
+      color: var(--gold-bright);
+      font-style: italic;
+    }
+
+    .hero-media {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 380px;
+      border-radius: 5px;
+      overflow: hidden;
+      z-index: 2;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+      will-change: width, height;
+    }
+
+    .hero-media img,
+    .hero-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.05) contrast(1.05) brightness(0.92);
+    }
+
+    .hero-media iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160%;
+      height: 160%;
+      border: 0;
+      pointer-events: none;
+    }
+
+    .hero-media .frame-rim {
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 70px 14px rgba(7, 10, 18, 0.7);
+      background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), transparent 40%, transparent 60%, rgba(7, 10, 18, 0.4));
+    }
+
+    .hero-hint {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--sans);
+      font-size: 10.5px;
+      letter-spacing: 0.24em;
+      color: var(--muted);
+      text-transform: uppercase;
+      transition: opacity .4s ease;
+    }
+
+    .hero-hint .line {
+      width: 1px;
+      height: 34px;
+      background: linear-gradient(var(--gold), transparent);
+      animation: scrolldown 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrolldown {
+      0% {
+        transform: scaleY(0);
+        transform-origin: top;
+      }
+
+      50% {
+        transform: scaleY(1);
+        transform-origin: top;
+      }
+
+      51% {
+        transform-origin: bottom;
+      }
+
+      100% {
+        transform: scaleY(0);
+        transform-origin: bottom;
+      }
+    }
+
+    .hero-reveal {
+      position: absolute;
+      bottom: 14%;
+      left: 50%;
+      transform: translate(-50%, 12px);
+      z-index: 3;
+      text-align: center;
+      max-width: 540px;
+      padding: 0 24px;
+      opacity: 0;
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .hero-reveal.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .hero-reveal p {
+      font-family: var(--body);
+      font-weight: 300;
+      color: var(--muted);
+      font-size: clamp(14px, 1.6vw, 17px);
+      line-height: 1.7;
+    }
+
+    @media (max-width:820px) {
+      .hero-title-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .hero-title-row .word-left {
+        text-align: center;
+      }
+    }
+
+    /* ---------- problem section : scattered chips ---------- */
+    .problem-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      width: 100%;
+      align-items: center;
+    }
+
+    @media (max-width:900px) {
+      .problem-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chip-field {
+      position: relative;
+      height: 340px;
+    }
+
+    .chip {
+      position: absolute;
+      font-family: var(--sans);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .in-view .chip {
+      opacity: 1;
+    }
+
+    .chip1 {
+      top: 6%;
+      left: 8%;
+      transform: rotate(-6deg);
+      transition-delay: .1s;
+    }
+
+    .chip2 {
+      top: 2%;
+      left: 48%;
+      transform: rotate(4deg);
+      transition-delay: .22s;
+    }
+
+    .chip3 {
+      top: 34%;
+      left: 2%;
+      transform: rotate(3deg);
+      transition-delay: .34s;
+    }
+
+    .chip4 {
+      top: 40%;
+      left: 52%;
+      transform: rotate(-3deg);
+      transition-delay: .46s;
+    }
+
+    .chip5 {
+      top: 66%;
+      left: 14%;
+      transform: rotate(-5deg);
+      transition-delay: .58s;
+    }
+
+    .chip6 {
+      top: 70%;
+      left: 56%;
+      transform: rotate(5deg);
+      transition-delay: .7s;
+    }
+
+    .chip-x {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1px;
+      height: 60%;
+      background: var(--line);
+      transform: translate(-50%, -50%) rotate(20deg);
+    }
+
+    /* ---------- solution wordmark ---------- */
+    .solution-wrap {
+      width: 100%;
+    }
+
+    .wordmark {
+      font-family: var(--serif);
+      font-size: clamp(48px, 10vw, 140px);
+      color: transparent;
+      -webkit-text-stroke: 1px var(--gold-deep);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+      margin-top: 36px;
+    }
+
+    .in-view .wordmark {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---------- objectives list ---------- */
+    .obj-list {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      max-width: 640px;
+    }
+
+    .obj-item {
+      display: flex;
+      gap: 22px;
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      opacity: 0;
+      transform: translateX(-14px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .in-view .obj-item {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .obj-item:nth-child(1) {
+      transition-delay: .05s;
+    }
+
+    .obj-item:nth-child(2) {
+      transition-delay: .14s;
+    }
+
+    .obj-item:nth-child(3) {
+      transition-delay: .23s;
+    }
+
+    .obj-item:nth-child(4) {
+      transition-delay: .32s;
+    }
+
+    .obj-item:nth-child(5) {
+      transition-delay: .41s;
+    }
+
+    .obj-item span.mark {
+      font-family: var(--serif);
+      color: var(--gold);
+      font-size: 15px;
+      padding-top: 2px;
+    }
+
+    .obj-item p {
+      font-family: var(--body);
+      font-weight: 300;
+      font-size: 16px;
+      color: var(--ivory);
+      line-height: 1.5;
+    }
+
+    .obj-item p b {
+      font-weight: 500;
+      color: var(--gold-bright);
+      font-style: normal;
+    }
+
+    /* ---------- audience cards ---------- */
+    .aud-grid {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--line);
+      max-width: 900px;
+      width: 100%;
+    }
+
+    @media (max-width:820px) {
+      .aud-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .aud-card {
+      background: var(--bg-deep);
+      padding: 34px 22px;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .in-view .aud-card {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .aud-card:nth-child(1) {
+      transition-delay: .05s;
+    }
+
+    .aud-card:nth-child(2) {
+      transition-delay: .15s;
+    }
+
+    .aud-card:nth-child(3) {
+      transition-delay: .25s;
+    }
+
+    .aud-card:nth-child(4) {
+      transition-delay: .35s;
+    }
+
+    .aud-card .num {
+      font-family: var(--sans);
+      font-size: 11px;
+      color: var(--gold-deep);
+      letter-spacing: 0.1em;
+    }
+
+    .aud-card h3 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 20px;
+      margin-top: 14px;
+      color: var(--ivory);
+    }
+
+    /* ---------- design section swatches ---------- */
+    .swatch-row {
+      display: flex;
+      gap: 14px;
+      margin-top: 38px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      width: 64px;
+      height: 64px;
+      border-radius: 3px;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      opacity: 0;
+      transform: scale(.85);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .in-view .swatch {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .swatch:nth-child(1) {
+      transition-delay: .05s;
+    }
+
+    .swatch:nth-child(2) {
+      transition-delay: .13s;
+    }
+
+    .swatch:nth-child(3) {
+      transition-delay: .21s;
+    }
+
+    .swatch:nth-child(4) {
+      transition-delay: .29s;
+    }
+
+    .swatch span {
+      position: absolute;
+      bottom: -22px;
+      left: 0;
+      font-family: var(--sans);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    /* ---------- tech stack ---------- */
+    .tech-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 38px;
+      max-width: 640px;
+    }
+
+    .tech-pill {
+      font-family: var(--sans);
+      font-size: 13.5px;
+      letter-spacing: 0.03em;
+      color: var(--ivory);
+      border: 1px solid var(--line);
+      padding: 12px 22px;
+      border-radius: 2px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .in-view .tech-pill {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tech-pill:nth-child(1) {
+      transition-delay: .05s;
+    }
+
+    .tech-pill:nth-child(2) {
+      transition-delay: .13s;
+    }
+
+    .tech-pill:nth-child(3) {
+      transition-delay: .21s;
+    }
+
+    .tech-pill:nth-child(4) {
+      transition-delay: .29s;
+    }
+
+    /* ---------- future timeline ---------- */
+    .future-list {
+      margin-top: 36px;
+      max-width: 620px;
+    }
+
+    .future-item {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+      font-family: var(--body);
+      font-weight: 300;
+      color: var(--muted);
+      font-size: 15.5px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .in-view .future-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .future-item:nth-child(1) {
+      transition-delay: .05s;
+    }
+
+    .future-item:nth-child(2) {
+      transition-delay: .13s;
+    }
+
+    .future-item:nth-child(3) {
+      transition-delay: .21s;
+    }
+
+    .future-item:nth-child(4) {
+      transition-delay: .29s;
+    }
+
+    .future-item:nth-child(5) {
+      transition-delay: .37s;
+    }
+
+    .future-item .dash {
+      color: var(--gold);
+      font-family: var(--serif);
+    }
+
+    .future-item b {
+      color: var(--ivory);
+      font-weight: 400;
+    }
+
+    /* ---------- closing ---------- */
+    .closing {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      border-bottom: none;
+    }
+
+    .closing h2 {
+      font-size: clamp(32px, 5.5vw, 64px);
+      max-width: 800px;
+    }
+
+    .closing .tagline {
+      font-family: var(--sans);
+      font-style: italic;
+      color: var(--gold-bright);
+      font-size: clamp(16px, 2vw, 20px);
+      margin-top: 18px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .7s ease .3s, transform .7s ease .3s;
+    }
+
+    .in-view .tagline {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-row {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .7s ease .5s, transform .7s ease .5s;
+    }
+
+    .in-view .cta-row {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-btn {
+      font-family: var(--sans);
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bg-deep);
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+      padding: 17px 38px;
+      border-radius: 2px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: transform .3s ease, box-shadow .3s ease;
+      display: inline-block;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25);
+    }
+
+    .cta-note {
+      font-family: var(--body);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .closing-foot {
+      margin-top: 90px;
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--gold-deep);
+      text-transform: uppercase;
+    }
+
+    /* ---------- qr code ---------- */
+    .qr-block {
+      position: absolute;
+      right: clamp(60px, 10vw, 160px);
+      bottom: clamp(50px, 8vh, 110px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .7s ease .6s, transform .7s ease .6s;
+    }
+
+    .in-view .qr-block {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .qr-block .qr-card {
+      width: clamp(200px, 18vw, 300px);
+      height: clamp(200px, 18vw, 300px);
+      background: var(--ivory);
+      padding: 6px;
+    }
+
+    .qr-block .qr-card svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .qr-block .qr-caption {
+      font-family: var(--sans);
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width:900px) {
+      .qr-block {
+        position: static;
+        margin-top: 44px;
+        align-items: flex-start;
+      }
+    }
+
+    .sec-index {
+      position: absolute;
+      top: clamp(28px, 6vw, 64px);
+      right: clamp(24px, 7vw, 96px);
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--gold-deep);
+      letter-spacing: 0.05em;
+    }
+
+    /* =========================================================
+   E EXPLOSION -> CONVERGENCE CINEMATIC LOADING SCREEN
+   5 seconds: reveal -> multiply -> explode -> converge -> hold
+   ========================================================= */
+    .loader {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 99999 !important;
+      display: grid !important;
+      place-items: center !important;
+      overflow: hidden !important;
+      background:
+        radial-gradient(ellipse at 50% 53%, rgba(212, 175, 55, .075), transparent 34%),
+        radial-gradient(ellipse at 50% 100%, rgba(212, 175, 55, .06), transparent 46%),
+        #020304 !important;
+      isolation: isolate;
+    }
+
+    .loader-vignette {
+      position: absolute;
+      inset: -10%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at center, transparent 28%, rgba(0, 0, 0, .32) 62%, rgba(0, 0, 0, .92) 100%);
+    }
+
+    .loader-horizon {
+      position: absolute;
+      left: 50%;
+      bottom: 18%;
+      width: 72vw;
+      height: 2px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, .7), transparent);
+      box-shadow: 0 0 28px rgba(212, 175, 55, .42);
+      opacity: 0;
+      animation: horizonIn .6s ease-out .05s forwards;
+    }
+
+    .loader-horizon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -5px;
+      width: 140px;
+      height: 12px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse, rgba(255, 222, 116, .65), transparent 70%);
+      filter: blur(4px);
+    }
+
+    @keyframes horizonIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(.1);
+      }
+
+      to {
+        opacity: .8;
+        transform: translateX(-50%) scaleX(1);
+      }
+    }
+
+    .loader-stage {
+      position: relative !important;
+      z-index: 4;
+      width: min(80vw, 940px) !important;
+      height: min(80vw, 940px) !important;
+      display: grid !important;
+      place-items: center !important;
+      perspective: 900px;
+    }
+
+    .loader-emblem.hero-e {
+      position: relative !important;
+      width: clamp(300px, 26vw, 420px) !important;
+      height: clamp(300px, 26vw, 420px) !important;
+      z-index: 10;
+      transform-origin: center;
+      animation: heroPulse 5s cubic-bezier(.2, .75, .2, 1) forwards;
+      filter: drop-shadow(0 22px 34px rgba(0, 0, 0, .88)) drop-shadow(0 2px 0 rgba(0, 0, 0, .9));
+    }
+
+    .loader-emblem.hero-e svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    @keyframes heroPulse {
+      0% {
+        opacity: 0;
+        transform: scale(.72);
+      }
+
+      10% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      20% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      56% {
+        opacity: .22;
+        transform: scale(.84);
+      }
+
+      73% {
+        opacity: .98;
+        transform: scale(1.05);
+      }
+
+      84% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .e-field {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      transform-style: preserve-3d;
+    }
+
+    .e-particle {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 62px;
+      height: 62px;
+      transform: translate(-50%, -50%) scale(.25);
+      opacity: 0;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, .35));
+      transform-style: preserve-3d;
+    }
+
+    .e-particle svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .e-particle svg path {
+      stroke-width: 10 !important;
+    }
+
+    .e-particle.e1 {
+      --tx: -41vw;
+      --ty: -27vh;
+      --rot: -22deg;
+      --delay: .64s;
+      --scale: 1.0;
+    }
+
+    .e-particle.e2 {
+      --tx: 43vw;
+      --ty: -22vh;
+      --rot: 28deg;
+      --delay: .72s;
+      --scale: 1.15;
+    }
+
+    .e-particle.e3 {
+      --tx: -46vw;
+      --ty: 4vh;
+      --rot: 12deg;
+      --delay: .58s;
+      --scale: .9;
+    }
+
+    .e-particle.e4 {
+      --tx: 48vw;
+      --ty: 9vh;
+      --rot: -18deg;
+      --delay: .66s;
+      --scale: 1.1;
+    }
+
+    .e-particle.e5 {
+      --tx: -34vw;
+      --ty: 27vh;
+      --rot: 31deg;
+      --delay: .76s;
+      --scale: 1.0;
+    }
+
+    .e-particle.e6 {
+      --tx: 37vw;
+      --ty: 30vh;
+      --rot: -27deg;
+      --delay: .70s;
+      --scale: .85;
+    }
+
+    .e-particle.e7 {
+      --tx: -23vw;
+      --ty: -37vh;
+      --rot: 19deg;
+      --delay: .82s;
+      --scale: .75;
+    }
+
+    .e-particle.e8 {
+      --tx: 24vw;
+      --ty: -35vh;
+      --rot: -15deg;
+      --delay: .86s;
+      --scale: .8;
+    }
+
+    .e-particle.e9 {
+      --tx: -53vw;
+      --ty: -11vh;
+      --rot: 42deg;
+      --delay: .64s;
+      --scale: .7;
+    }
+
+    .e-particle.e10 {
+      --tx: 54vw;
+      --ty: -4vh;
+      --rot: -39deg;
+      --delay: .74s;
+      --scale: .75;
+    }
+
+    .e-particle.e11 {
+      --tx: -11vw;
+      --ty: 40vh;
+      --rot: -24deg;
+      --delay: .9s;
+      --scale: .8;
+    }
+
+    .e-particle.e12 {
+      --tx: 13vw;
+      --ty: 42vh;
+      --rot: 36deg;
+      --delay: .88s;
+      --scale: .72;
+    }
+
+    .e-particle.e13 {
+      --tx: -28vw;
+      --ty: 10vh;
+      --rot: -31deg;
+      --delay: .62s;
+      --scale: .6;
+    }
+
+    .e-particle.e14 {
+      --tx: 30vw;
+      --ty: 12vh;
+      --rot: 26deg;
+      --delay: .69s;
+      --scale: .65;
+    }
+
+    .e-particle.e15 {
+      --tx: -7vw;
+      --ty: -27vh;
+      --rot: 18deg;
+      --delay: .77s;
+      --scale: .55;
+    }
+
+    .e-particle.e16 {
+      --tx: 6vw;
+      --ty: -40vh;
+      --rot: -29deg;
+      --delay: .83s;
+      --scale: .58;
+    }
+
+    .e-particle.e17 {
+      --tx: -41vw;
+      --ty: 35vh;
+      --rot: 22deg;
+      --delay: .79s;
+      --scale: .65;
+    }
+
+    .e-particle.e18 {
+      --tx: 43vw;
+      --ty: 34vh;
+      --rot: -20deg;
+      --delay: .73s;
+      --scale: .6;
+    }
+
+    .e-particle {
+      animation: eBurst 4.35s cubic-bezier(.12, .72, .18, 1) var(--delay) both;
+    }
+
+    @keyframes eBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(.15);
+      }
+
+      10% {
+        opacity: .95;
+        transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(.55);
+      }
+
+      42% {
+        opacity: .88;
+        transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(var(--scale));
+      }
+
+      59% {
+        opacity: .42;
+        transform: translate(-50%, -50%) translate(calc(var(--tx)*.92), calc(var(--ty)*.92)) rotate(calc(var(--rot)*1.35)) scale(calc(var(--scale)*.82));
+      }
+
+      73% {
+        opacity: .9;
+        transform: translate(-50%, -50%) translate(calc(var(--tx)*.20), calc(var(--ty)*.20)) rotate(calc(var(--rot)*.35)) scale(.55);
+      }
+
+      86% {
+        opacity: .45;
+        transform: translate(-50%, -50%) translate(calc(var(--tx)*.055), calc(var(--ty)*.055)) rotate(0deg) scale(.34);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(.12);
+      }
+    }
+
+    .loader-shockwave {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border: 1.5px solid rgba(232, 199, 102, .7);
+      border-radius: 50%;
+      opacity: 0;
+      z-index: 2;
+      animation: shock 1.1s ease-out .58s forwards, shock2 1.1s ease-out 2.72s forwards;
+    }
+
+    @keyframes shock {
+      0% {
+        opacity: 0;
+        transform: scale(.2);
+      }
+
+      18% {
+        opacity: .8;
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(7.2);
+      }
+    }
+
+    @keyframes shock2 {
+      0% {
+        opacity: 0;
+        transform: scale(.15);
+      }
+
+      18% {
+        opacity: .65;
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(5.8);
+      }
+    }
+
+    .loader-caption {
+      position: absolute !important;
+      top: calc(50% + 234px);
+      left: 50%;
+      transform: translateX(-50%) translateY(14px);
+      z-index: 12;
+      margin: 0 !important;
+      opacity: 0;
+      letter-spacing: .4em !important;
+      font-size: clamp(15px, 1.5vw, 19px) !important;
+      font-weight: 500 !important;
+      color: #e9c766 !important;
+      text-shadow: 0 0 22px rgba(212, 175, 55, .36);
+      animation: brandIn .8s cubic-bezier(.19, 1, .22, 1) 4.18s forwards;
+    }
+
+    .loader-rule {
+      position: absolute !important;
+      top: calc(50% + 264px);
+      left: 50%;
+      width: 0;
+      height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+      box-shadow: 0 0 12px rgba(212, 175, 55, .32);
+      animation: ruleIn .65s ease-out 4.35s forwards;
+    }
+
+    @keyframes brandIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @keyframes ruleIn {
+      from {
+        width: 0;
+        opacity: 0;
+      }
+
+      to {
+        width: 190px;
+        opacity: .7;
+      }
+    }
+
+    /* Gold dust / speed streaks */
+    .loader-stage::before,
+    .loader-stage::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1px;
+      height: 55vh;
+      background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, .35), transparent);
+      opacity: 0;
+      z-index: 1;
+      transform-origin: center;
+      pointer-events: none;
+    }
+
+    .loader-stage::before {
+      transform: translate(-50%, -50%) rotate(24deg) scaleY(.1);
+      animation: streak 1.2s ease-out .55s forwards;
+    }
+
+    .loader-stage::after {
+      transform: translate(-50%, -50%) rotate(-31deg) scaleY(.1);
+      animation: streak 1.2s ease-out .72s forwards;
+    }
+
+    @keyframes streak {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--r, 24deg)) scaleY(.1);
+      }
+
+      15% {
+        opacity: .7;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--r, 24deg)) scaleY(1.5);
+      }
+    }
+
+    @media (max-width:700px) {
+      .loader-emblem.hero-e {
+        width: 250px !important;
+        height: 250px !important;
+      }
+
+      .loader-caption {
+        top: calc(50% + 158px);
+        font-size: 13px !important;
+      }
+
+      .loader-rule {
+        top: calc(50% + 182px);
+      }
+
+      .e-particle {
+        width: 46px;
+        height: 46px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="grain"></div>
-<div class="vignette"></div>
-<div class="progress" id="progress"></div>
 
-<nav class="dotnav" id="dotnav"></nav>
-<div class="stepper" id="stepper">
-  <button id="stepUp" aria-label="Previous section">&#8593;</button>
-  <button id="stepDown" aria-label="Next section">&#8595;</button>
-</div>
+  <div class="loader" id="cinematicLoader">
+    <div class="loader-vignette"></div>
+    <div class="loader-horizon"></div>
+    <div class="e-field" aria-hidden="true">
+      <span class="e-particle e1"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
 
-<!-- 1. HERO — scroll to expand -->
-<section class="hero-expand" id="s1" data-index="—">
-  <div class="hero-bg" id="heroBg">
-    <img src="https://images.pexels.com/photos/3873681/pexels-photo-3873681.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1600&dpr=1" alt="Pyramids of Giza at sunset">
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e2"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e3"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e4"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e5"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e6"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e7"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e8"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e9"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e10"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e11"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e12"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e13"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e14"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e15"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e16"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e17"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+      <span class="e-particle e18"><svg viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <filter id="eGlow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGrad" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff0ad" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Original company E logo, kept straight and made more Egyptian/monumental -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGrad)"
+            stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlow)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M42 28 L47 33 L52 28 M42 112 L47 107 L52 112
+                 M97 28 L102 33 L97 38 M97 102 L102 107 L97 112" fill="none" stroke="#d4af37" stroke-width="2.2"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3" opacity="0" filter="url(#eGlow)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg></span>
+    </div>
+
+    <div class="loader-stage">
+      <div class="loader-emblem hero-e">
+        <svg viewBox="0 0 140 140" aria-label="Egypt 360 original E logo" shape-rendering="geometricPrecision">
+          <defs>
+            <filter id="eGlowHero" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="eGradHero" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="180" y2="0">
+              <animate attributeName="x1" values="-60;220;-60" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="0;280;0" dur="3s" begin="1.6s" repeatCount="indefinite" />
+              <stop offset="0" stop-color="#8a6a1f" stop-opacity="0" />
+              <stop offset=".34" stop-color="#d4af37" />
+              <stop offset=".5" stop-color="#fff5c4" />
+              <stop offset=".7" stop-color="#d4af37" />
+              <stop offset="1" stop-color="#8a6a1f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Carved-relief shadow (gives the stroke an engraved-in-stone depth) -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(0,0,0,.55)"
+            stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" transform="translate(1.8,2.6)" />
+
+          <!-- Base underlayer -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="rgba(212,175,55,.20)"
+            stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" />
+
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none" stroke="url(#eGradHero)"
+            stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" pathLength="100" stroke-dasharray="100"
+            stroke-dashoffset="100" filter="url(#eGlowHero)">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Crisp top highlight edge (catches the light like carved limestone) -->
+          <path d="M47 33 L47 107 M47 33 L97 33 M47 68 L89 68 M47 107 L97 107" fill="none"
+            stroke="rgba(255,244,204,.35)" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter"
+            transform="translate(-1.4,-1.4)" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+            <animate attributeName="stroke-dashoffset" values="100;0" calcMode="spline" keySplines=".19 1 .22 1"
+              dur="2s" begin=".15s" fill="freeze" />
+          </path>
+
+          <!-- Subtle Egyptian-style terminal cuts, no frame -->
+          <path d="M41 27 L47 33 L53 27 M41 113 L47 107 L53 113
+                 M97 27 L103 33 L97 39 M97 101 L103 107 L97 113" fill="none" stroke="#d4af37" stroke-width="2.6"
+            stroke-linecap="square" stroke-linejoin="miter" opacity=".9" />
+
+          <!-- Final glint -->
+          <path d="M35 25 L105 112" stroke="#fff2b5" stroke-width="3.4" opacity="0" filter="url(#eGlowHero)">
+            <animate attributeName="opacity" values="0;0;.9;0" keyTimes="0;.48;.72;1" dur=".9s" begin="3.75s"
+              fill="freeze" />
+          </path>
+        </svg>
+      </div>
+      <div class="loader-shockwave"></div>
+      <div class="loader-caption">EGYPT 360</div>
+      <div class="loader-rule"></div>
+    </div>
   </div>
-  <div class="hero-stage">
-    <p class="hero-eyebrow-fixed">Egypt 360 — Web Presentation</p>
 
-    <div class="hero-title-row">
-      <h1 class="word-left" id="wordLeft">Egypt&nbsp;</h1>
-      <h1 class="word-right" id="wordRight">360</h1>
-    </div>
-
-    <div class="hero-media" id="heroMedia">
-      <iframe src="https://player.vimeo.com/video/232001860?h=b05a84f2bf&background=1&autoplay=1&loop=1&muted=1&app_id=122963" title="Egypt Tourism Film" allow="autoplay; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-      <div class="frame-rim"></div>
-    </div>
-
-    <div class="hero-hint" id="heroHint"><span>Scroll to expand</span><div class="line"></div></div>
-
-    <div class="hero-reveal" id="heroReveal">
-      <p>Egypt has always had everything a traveler dreams of — history, sea, desert, culture. It never had one place to discover it. Until now.</p>
-    </div>
   </div>
-</section>
 
-<!-- 2. PROBLEM -->
-<section id="s2">
-  <span class="sec-index">01</span>
-  <div class="problem-wrap">
+  <div class="grain"></div>
+  <div class="vignette"></div>
+  <div class="progress" id="progress"></div>
+
+  <nav class="dotnav" id="dotnav"></nav>
+  <div class="stepper" id="stepper">
+    <button id="stepUp" aria-label="Previous section">&#8593;</button>
+    <button id="stepDown" aria-label="Next section">&#8595;</button>
+  </div>
+
+  <!-- 1. HERO — scroll to expand -->
+  <section class="hero-expand" id="s1" data-index="—">
+    <div class="hero-bg" id="heroBg">
+      <img
+        src="https://images.pexels.com/photos/3873681/pexels-photo-3873681.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1600&dpr=1"
+        alt="Pyramids of Giza at sunset">
+    </div>
+    <div class="hero-stage">
+      <p class="hero-eyebrow-fixed">Egypt 360 — Web Presentation</p>
+
+      <div class="hero-title-row">
+        <h1 class="word-left" id="wordLeft">Egypt&nbsp;</h1>
+        <h1 class="word-right" id="wordRight">360</h1>
+      </div>
+
+      <div class="hero-media" id="heroMedia">
+        <iframe
+          src="https://player.vimeo.com/video/232001860?h=b05a84f2bf&background=1&autoplay=1&loop=1&muted=1&app_id=122963"
+          title="Egypt Tourism Film" allow="autoplay; fullscreen; picture-in-picture"
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="frame-rim"></div>
+      </div>
+
+      <div class="hero-hint" id="heroHint"><span>Scroll to expand</span>
+        <div class="line"></div>
+      </div>
+
+      <div class="hero-reveal" id="heroReveal">
+        <p>Egypt has always had everything a traveler dreams of — history, sea, desert, culture. It never had one place
+          to discover it. Until now.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. PROBLEM -->
+  <section id="s2">
+    <span class="sec-index">01</span>
+    <div class="problem-wrap">
+      <div>
+        <p class="eyebrow">The Problem</p>
+        <h2 class="reveal-line" style="font-size:clamp(30px,4.4vw,52px);"><span>Travel information about</span></h2>
+        <h2 class="reveal-line" style="font-size:clamp(30px,4.4vw,52px);"><span>Egypt is <span
+              class="gold-word">scattered.</span></span></h2>
+        <p class="body-text">Spread across dozens of websites and social platforms, it leaves travelers struggling to
+          discover destinations, compare experiences, or picture a complete Egyptian journey from one place.</p>
+      </div>
+      <div class="chip-field">
+        <div class="chip-x"></div>
+        <div class="chip chip1">Random blog posts</div>
+        <div class="chip chip2">Instagram reels</div>
+        <div class="chip chip3">Outdated travel sites</div>
+        <div class="chip chip4">Facebook groups</div>
+        <div class="chip chip5">Scattered reviews</div>
+        <div class="chip chip6">Tour agency PDFs</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SOLUTION -->
+  <section id="s3">
+    <span class="sec-index">02</span>
+    <div class="solution-wrap">
+      <p class="eyebrow">The Solution</p>
+      <h2 class="reveal-line" style="font-size:clamp(32px,5vw,60px);"><span>One platform.</span></h2>
+      <h2 class="reveal-line" style="font-size:clamp(32px,5vw,60px);"><span>Every side of <span
+            class="gold-word">Egypt.</span></span></h2>
+      <p class="body-text">Egypt 360 brings destinations, ancient history, beaches, adventure, and culture together into
+        one simple, visually engaging experience.</p>
+      <div class="wordmark">EGYPT 360</div>
+    </div>
+  </section>
+
+  <!-- 4. OBJECTIVES -->
+  <section id="s4">
+    <span class="sec-index">03</span>
     <div>
-      <p class="eyebrow">The Problem</p>
-      <h2 class="reveal-line" style="font-size:clamp(30px,4.4vw,52px);"><span>Travel information about</span></h2>
-      <h2 class="reveal-line" style="font-size:clamp(30px,4.4vw,52px);"><span>Egypt is <span class="gold-word">scattered.</span></span></h2>
-      <p class="body-text">Spread across dozens of websites and social platforms, it leaves travelers struggling to discover destinations, compare experiences, or picture a complete Egyptian journey from one place.</p>
+      <p class="eyebrow">Objectives</p>
+      <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>What we set out to build</span></h2>
+      <div class="obj-list">
+        <div class="obj-item"><span class="mark">—</span>
+          <p><b>Promote Egypt</b> as a diverse tourism destination</p>
+        </div>
+        <div class="obj-item"><span class="mark">—</span>
+          <p><b>Simplify discovery</b> of destinations across the country</p>
+        </div>
+        <div class="obj-item"><span class="mark">—</span>
+          <p><b>Present history & culture</b> alongside beaches and adventure</p>
+        </div>
+        <div class="obj-item"><span class="mark">—</span>
+          <p><b>Enable trip planning</b> with a simple, visual concept</p>
+        </div>
+        <div class="obj-item"><span class="mark">—</span>
+          <p><b>Deliver responsively</b> across desktop, tablet and mobile</p>
+        </div>
+      </div>
     </div>
-    <div class="chip-field">
-      <div class="chip-x"></div>
-      <div class="chip chip1">Random blog posts</div>
-      <div class="chip chip2">Instagram reels</div>
-      <div class="chip chip3">Outdated travel sites</div>
-      <div class="chip chip4">Facebook groups</div>
-      <div class="chip chip5">Scattered reviews</div>
-      <div class="chip chip6">Tour agency PDFs</div>
+  </section>
+
+  <!-- 5. AUDIENCE -->
+  <section id="s5">
+    <span class="sec-index">04</span>
+    <div style="width:100%;">
+      <p class="eyebrow">Who It's For</p>
+      <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>Built for every kind of traveler</span></h2>
+      <div class="aud-grid">
+        <div class="aud-card">
+          <div class="num">01</div>
+          <h3>Tourists</h3>
+        </div>
+        <div class="aud-card">
+          <div class="num">02</div>
+          <h3>Families</h3>
+        </div>
+        <div class="aud-card">
+          <div class="num">03</div>
+          <h3>Students</h3>
+        </div>
+        <div class="aud-card">
+          <div class="num">04</div>
+          <h3>Culture Seekers</h3>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- 3. SOLUTION -->
-<section id="s3">
-  <span class="sec-index">02</span>
-  <div class="solution-wrap">
-    <p class="eyebrow">The Solution</p>
-    <h2 class="reveal-line" style="font-size:clamp(32px,5vw,60px);"><span>One platform.</span></h2>
-    <h2 class="reveal-line" style="font-size:clamp(32px,5vw,60px);"><span>Every side of <span class="gold-word">Egypt.</span></span></h2>
-    <p class="body-text">Egypt 360 brings destinations, ancient history, beaches, adventure, and culture together into one simple, visually engaging experience.</p>
-    <div class="wordmark">EGYPT 360</div>
-  </div>
-</section>
-
-<!-- 4. OBJECTIVES -->
-<section id="s4">
-  <span class="sec-index">03</span>
-  <div>
-    <p class="eyebrow">Objectives</p>
-    <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>What we set out to build</span></h2>
-    <div class="obj-list">
-      <div class="obj-item"><span class="mark">—</span><p><b>Promote Egypt</b> as a diverse tourism destination</p></div>
-      <div class="obj-item"><span class="mark">—</span><p><b>Simplify discovery</b> of destinations across the country</p></div>
-      <div class="obj-item"><span class="mark">—</span><p><b>Present history & culture</b> alongside beaches and adventure</p></div>
-      <div class="obj-item"><span class="mark">—</span><p><b>Enable trip planning</b> with a simple, visual concept</p></div>
-      <div class="obj-item"><span class="mark">—</span><p><b>Deliver responsively</b> across desktop, tablet and mobile</p></div>
+  <!-- 6. DESIGN CONCEPT -->
+  <section id="s6">
+    <span class="sec-index">05</span>
+    <div>
+      <p class="eyebrow">Design Language</p>
+      <h2 class="reveal-line" style="font-size:clamp(32px,5vw,60px);"><span>Dark. Cinematic. <span
+            class="gold-word">Golden.</span></span></h2>
+      <p class="body-text">A dark, cinematic interface with warm gold accents — inspired by Egyptian heritage, built
+        with a modern tourism-platform feel. Bold imagery, clear hierarchy, and confident calls to action.</p>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#070a12;"><span>Deep Navy</span></div>
+        <div class="swatch" style="background:#111828;"><span>Panel</span></div>
+        <div class="swatch" style="background:#d4af37;"><span>Gold</span></div>
+        <div class="swatch" style="background:#f3efe2;"><span>Ivory</span></div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- 5. AUDIENCE -->
-<section id="s5">
-  <span class="sec-index">04</span>
-  <div style="width:100%;">
-    <p class="eyebrow">Who It's For</p>
-    <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>Built for every kind of traveler</span></h2>
-    <div class="aud-grid">
-      <div class="aud-card"><div class="num">01</div><h3>Tourists</h3></div>
-      <div class="aud-card"><div class="num">02</div><h3>Families</h3></div>
-      <div class="aud-card"><div class="num">03</div><h3>Students</h3></div>
-      <div class="aud-card"><div class="num">04</div><h3>Culture Seekers</h3></div>
+  <!-- 7. TECH STACK -->
+  <section id="s7">
+    <span class="sec-index">06</span>
+    <div>
+      <p class="eyebrow">Built With</p>
+      <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>Under the hood</span></h2>
+      <div class="tech-row">
+        <div class="tech-pill">HTML5</div>
+        <div class="tech-pill">CSS3</div>
+        <div class="tech-pill">Bootstrap 5.3.3</div>
+        <div class="tech-pill">Bootstrap Icons</div>
+      </div>
+      <p class="body-text" style="margin-top:30px;">Custom CSS drives the visual identity, hover effects and responsive
+        behavior — Bootstrap handles layout, navigation and forms.</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- 6. DESIGN CONCEPT -->
-<section id="s6">
-  <span class="sec-index">05</span>
-  <div>
-    <p class="eyebrow">Design Language</p>
-    <h2 class="reveal-line" style="font-size:clamp(32px,5vw,60px);"><span>Dark. Cinematic. <span class="gold-word">Golden.</span></span></h2>
-    <p class="body-text">A dark, cinematic interface with warm gold accents — inspired by Egyptian heritage, built with a modern tourism-platform feel. Bold imagery, clear hierarchy, and confident calls to action.</p>
-    <div class="swatch-row">
-      <div class="swatch" style="background:#070a12;"><span>Deep Navy</span></div>
-      <div class="swatch" style="background:#111828;"><span>Panel</span></div>
-      <div class="swatch" style="background:#d4af37;"><span>Gold</span></div>
-      <div class="swatch" style="background:#f3efe2;"><span>Ivory</span></div>
+  <!-- 8. FUTURE -->
+  <section id="s8">
+    <span class="sec-index">07</span>
+    <div style="width:100%;">
+      <p class="eyebrow">What's Next</p>
+      <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>From prototype to platform</span></h2>
+      <div class="future-list">
+        <div class="future-item"><span class="dash">—</span><span><b>AI-powered</b> travel recommendations</span></div>
+        <div class="future-item"><span class="dash">—</span><span>Real <b>booking & payment</b> integration</span></div>
+        <div class="future-item"><span class="dash">—</span><span><b>Google Maps</b> integration</span></div>
+        <div class="future-item"><span class="dash">—</span><span><b>Multilingual</b> support</span></div>
+        <div class="future-item"><span class="dash">—</span><span>Full <b>backend & database</b></span></div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- 7. TECH STACK -->
-<section id="s7">
-  <span class="sec-index">06</span>
-  <div>
-    <p class="eyebrow">Built With</p>
-    <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>Under the hood</span></h2>
-    <div class="tech-row">
-      <div class="tech-pill">HTML5</div>
-      <div class="tech-pill">CSS3</div>
-      <div class="tech-pill">Bootstrap 5.3.3</div>
-      <div class="tech-pill">Bootstrap Icons</div>
+  <!-- 9. CLOSING -->
+  <section class="closing" id="s9">
+    <span class="sec-index">08</span>
+    <p class="eyebrow">See It Live</p>
+    <h2 class="reveal-line"><span>Discover Egypt.</span></h2>
+    <h2 class="reveal-line"><span><span class="gold-word">Live</span> the story.</span></h2>
+    <p class="tagline">— Egypt 360</p>
+    <div class="cta-row">
+      <a href="https://ommarhassan.github.io/-TEAM_F09/" class="cta-btn" id="liveLink" target="_blank"
+        rel="noopener">View the live site</a>
     </div>
-    <p class="body-text" style="margin-top:30px;">Custom CSS drives the visual identity, hover effects and responsive behavior — Bootstrap handles layout, navigation and forms.</p>
-  </div>
-</section>
+    <p class="closing-foot">Thank you</p>
 
-<!-- 8. FUTURE -->
-<section id="s8">
-  <span class="sec-index">07</span>
-  <div style="width:100%;">
-    <p class="eyebrow">What's Next</p>
-    <h2 class="reveal-line" style="font-size:clamp(28px,4vw,48px);"><span>From prototype to platform</span></h2>
-    <div class="future-list">
-      <div class="future-item"><span class="dash">—</span><span><b>AI-powered</b> travel recommendations</span></div>
-      <div class="future-item"><span class="dash">—</span><span>Real <b>booking & payment</b> integration</span></div>
-      <div class="future-item"><span class="dash">—</span><span><b>Google Maps</b> integration</span></div>
-      <div class="future-item"><span class="dash">—</span><span><b>Multilingual</b> support</span></div>
-      <div class="future-item"><span class="dash">—</span><span>Full <b>backend & database</b></span></div>
+    <div class="qr-block">
+      <div class="qr-card">
+        <svg viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M2,2H3V3H2zM3,2H4V3H3zM4,2H5V3H4zM5,2H6V3H5zM6,2H7V3H6zM7,2H8V3H7zM8,2H9V3H8zM11,2H12V3H11zM12,2H13V3H12zM13,2H14V3H13zM14,2H15V3H14zM16,2H17V3H16zM21,2H22V3H21zM24,2H25V3H24zM25,2H26V3H25zM26,2H27V3H26zM27,2H28V3H27zM28,2H29V3H28zM29,2H30V3H29zM30,2H31V3H30zM2,3H3V4H2zM8,3H9V4H8zM14,3H15V4H14zM15,3H16V4H15zM16,3H17V4H16zM17,3H18V4H17zM19,3H20V4H19zM20,3H21V4H20zM22,3H23V4H22zM24,3H25V4H24zM30,3H31V4H30zM2,4H3V5H2zM4,4H5V5H4zM5,4H6V5H5zM6,4H7V5H6zM8,4H9V5H8zM11,4H12V5H11zM12,4H13V5H12zM13,4H14V5H13zM14,4H15V5H14zM17,4H18V5H17zM19,4H20V5H19zM20,4H21V5H20zM24,4H25V5H24zM26,4H27V5H26zM27,4H28V5H27zM28,4H29V5H28zM30,4H31V5H30zM2,5H3V6H2zM4,5H5V6H4zM5,5H6V6H5zM6,5H7V6H6zM8,5H9V6H8zM11,5H12V6H11zM13,5H14V6H13zM14,5H15V6H14zM18,5H19V6H18zM20,5H21V6H20zM24,5H25V6H24zM26,5H27V6H26zM27,5H28V6H27zM28,5H29V6H28zM30,5H31V6H30zM2,6H3V7H2zM4,6H5V7H4zM5,6H6V7H5zM6,6H7V7H6zM8,6H9V7H8zM11,6H12V7H11zM13,6H14V7H13zM14,6H15V7H14zM15,6H16V7H15zM18,6H19V7H18zM19,6H20V7H19zM20,6H21V7H20zM24,6H25V7H24zM26,6H27V7H26zM27,6H28V7H27zM28,6H29V7H28zM30,6H31V7H30zM2,7H3V8H2zM8,7H9V8H8zM10,7H11V8H10zM11,7H12V8H11zM12,7H13V8H12zM14,7H15V8H14zM15,7H16V8H15zM16,7H17V8H16zM17,7H18V8H17zM18,7H19V8H18zM21,7H22V8H21zM24,7H25V8H24zM30,7H31V8H30zM2,8H3V9H2zM3,8H4V9H3zM4,8H5V9H4zM5,8H6V9H5zM6,8H7V9H6zM7,8H8V9H7zM8,8H9V9H8zM10,8H11V9H10zM12,8H13V9H12zM14,8H15V9H14zM16,8H17V9H16zM18,8H19V9H18zM20,8H21V9H20zM22,8H23V9H22zM24,8H25V9H24zM25,8H26V9H25zM26,8H27V9H26zM27,8H28V9H27zM28,8H29V9H28zM29,8H30V9H29zM30,8H31V9H30zM11,9H12V10H11zM13,9H14V10H13zM14,9H15V10H14zM17,9H18V10H17zM19,9H20V10H19zM21,9H22V10H21zM22,9H23V10H22zM2,10H3V11H2zM5,10H6V11H5zM7,10H8V11H7zM8,10H9V11H8zM10,10H11V11H10zM12,10H13V11H12zM15,10H16V11H15zM17,10H18V11H17zM18,10H19V11H18zM23,10H24V11H23zM25,10H26V11H25zM6,11H7V12H6zM9,11H10V12H9zM10,11H11V12H10zM11,11H12V12H11zM13,11H14V12H13zM16,11H17V12H16zM17,11H18V12H17zM18,11H19V12H18zM19,11H20V12H19zM20,11H21V12H20zM22,11H23V12H22zM24,11H25V12H24zM27,11H28V12H27zM30,11H31V12H30zM4,12H5V13H4zM5,12H6V13H5zM8,12H9V13H8zM9,12H10V13H9zM10,12H11V13H10zM13,12H14V13H13zM14,12H15V13H14zM15,12H16V13H15zM16,12H17V13H16zM18,12H19V13H18zM21,12H22V13H21zM22,12H23V13H22zM25,12H26V13H25zM26,12H27V13H26zM27,12H28V13H27zM28,12H29V13H28zM29,12H30V13H29zM2,13H3V14H2zM3,13H4V14H3zM4,13H5V14H4zM5,13H6V14H5zM7,13H8V14H7zM11,13H12V14H11zM12,13H13V14H12zM13,13H14V14H13zM14,13H15V14H14zM15,13H16V14H15zM17,13H18V14H17zM20,13H21V14H20zM23,13H24V14H23zM24,13H25V14H24zM28,13H29V14H28zM29,13H30V14H29zM2,14H3V15H2zM3,14H4V15H3zM4,14H5V15H4zM5,14H6V15H5zM8,14H9V15H8zM10,14H11V15H10zM13,14H14V15H13zM14,14H15V15H14zM15,14H16V15H15zM16,14H17V15H16zM18,14H19V15H18zM19,14H20V15H19zM21,14H22V15H21zM22,14H23V15H22zM23,14H24V15H23zM24,14H25V15H24zM27,14H28V15H27zM29,14H30V15H29zM30,14H31V15H30zM6,15H7V16H6zM10,15H11V16H10zM11,15H12V16H11zM14,15H15V16H14zM15,15H16V16H15zM17,15H18V16H17zM19,15H20V16H19zM21,15H22V16H21zM23,15H24V16H23zM2,16H3V17H2zM3,16H4V17H3zM4,16H5V17H4zM6,16H7V17H6zM8,16H9V17H8zM9,16H10V17H9zM12,16H13V17H12zM14,16H15V17H14zM15,16H16V17H15zM16,16H17V17H16zM20,16H21V17H20zM26,16H27V17H26zM27,16H28V17H27zM28,16H29V17H28zM29,16H30V17H29zM30,16H31V17H30zM2,17H3V18H2zM4,17H5V18H4zM5,17H6V18H5zM7,17H8V18H7zM9,17H10V18H9zM11,17H12V18H11zM12,17H13V18H12zM15,17H16V18H15zM16,17H17V18H16zM17,17H18V18H17zM18,17H19V18H18zM19,17H20V18H19zM22,17H23V18H22zM23,17H24V18H23zM26,17H27V18H26zM27,17H28V18H27zM29,17H30V18H29zM2,18H3V19H2zM3,18H4V19H3zM4,18H5V19H4zM6,18H7V19H6zM7,18H8V19H7zM8,18H9V19H8zM15,18H16V19H15zM16,18H17V19H16zM19,18H20V19H19zM20,18H21V19H20zM22,18H23V19H22zM23,18H24V19H23zM29,18H30V19H29zM5,19H6V20H5zM6,19H7V20H6zM7,19H8V20H7zM10,19H11V20H10zM11,19H12V20H11zM12,19H13V20H12zM13,19H14V20H13zM16,19H17V20H16zM17,19H18V20H17zM18,19H19V20H18zM19,19H20V20H19zM23,19H24V20H23zM24,19H25V20H24zM25,19H26V20H25zM27,19H28V20H27zM30,19H31V20H30zM2,20H3V21H2zM4,20H5V21H4zM5,20H6V21H5zM8,20H9V21H8zM10,20H11V21H10zM14,20H15V21H14zM15,20H16V21H15zM18,20H19V21H18zM19,20H20V21H19zM24,20H25V21H24zM25,20H26V21H25zM26,20H27V21H26zM29,20H30V21H29zM30,20H31V21H30zM11,21H12V22H11zM13,21H14V22H13zM15,21H16V22H15zM17,21H18V22H17zM19,21H20V22H19zM24,21H25V22H24zM26,21H27V22H26zM29,21H30V22H29zM30,21H31V22H30zM2,22H3V23H2zM6,22H7V23H6zM7,22H8V23H7zM8,22H9V23H8zM11,22H12V23H11zM12,22H13V23H12zM16,22H17V23H16zM22,22H23V23H22zM23,22H24V23H23zM24,22H25V23H24zM25,22H26V23H25zM26,22H27V23H26zM28,22H29V23H28zM10,23H11V24H10zM12,23H13V24H12zM14,23H15V24H14zM15,23H16V24H15zM17,23H18V24H17zM18,23H19V24H18zM21,23H22V24H21zM22,23H23V24H22zM26,23H27V24H26zM28,23H29V24H28zM29,23H30V24H29zM30,23H31V24H30zM2,24H3V25H2zM3,24H4V25H3zM4,24H5V25H4zM5,24H6V25H5zM6,24H7V25H6zM7,24H8V25H7zM8,24H9V25H8zM12,24H13V25H12zM13,24H14V25H13zM14,24H15V25H14zM15,24H16V25H15zM16,24H17V25H16zM18,24H19V25H18zM20,24H21V25H20zM22,24H23V25H22zM24,24H25V25H24zM26,24H27V25H26zM29,24H30V25H29zM2,25H3V26H2zM8,25H9V26H8zM10,25H11V26H10zM11,25H12V26H11zM13,25H14V26H13zM15,25H16V26H15zM17,25H18V26H17zM18,25H19V26H18zM20,25H21V26H20zM22,25H23V26H22zM26,25H27V26H26zM27,25H28V26H27zM28,25H29V26H28zM29,25H30V26H29zM2,26H3V27H2zM4,26H5V27H4zM5,26H6V27H5zM6,26H7V27H6zM8,26H9V27H8zM11,26H12V27H11zM12,26H13V27H12zM14,26H15V27H14zM16,26H17V27H16zM17,26H18V27H17zM18,26H19V27H18zM19,26H20V27H19zM22,26H23V27H22zM23,26H24V27H23zM24,26H25V27H24zM25,26H26V27H25zM26,26H27V27H26zM2,27H3V28H2zM4,27H5V28H4zM5,27H6V28H5zM6,27H7V28H6zM8,27H9V28H8zM10,27H11V28H10zM11,27H12V28H11zM12,27H13V28H12zM13,27H14V28H13zM16,27H17V28H16zM18,27H19V28H18zM21,27H22V28H21zM22,27H23V28H22zM24,27H25V28H24zM25,27H26V28H25zM26,27H27V28H26zM27,27H28V28H27zM28,27H29V28H28zM29,27H30V28H29zM2,28H3V29H2zM4,28H5V29H4zM5,28H6V29H5zM6,28H7V29H6zM8,28H9V29H8zM12,28H13V29H12zM13,28H14V29H13zM15,28H16V29H15zM23,28H24V29H23zM26,28H27V29H26zM27,28H28V29H27zM28,28H29V29H28zM30,28H31V29H30zM2,29H3V30H2zM8,29H9V30H8zM12,29H13V30H12zM13,29H14V30H13zM14,29H15V30H14zM15,29H16V30H15zM18,29H19V30H18zM19,29H20V30H19zM20,29H21V30H20zM22,29H23V30H22zM23,29H24V30H23zM26,29H27V30H26zM29,29H30V30H29zM2,30H3V31H2zM3,30H4V31H3zM4,30H5V31H4zM5,30H6V31H5zM6,30H7V31H6zM7,30H8V31H7zM8,30H9V31H8zM10,30H11V31H10zM11,30H12V31H11zM16,30H17V31H16zM17,30H18V31H17zM19,30H20V31H19zM20,30H21V31H20zM22,30H23V31H22zM23,30H24V31H23zM24,30H25V31H24zM25,30H26V31H25zM27,30H28V31H27zM29,30H30V31H29z"
+            fill="#0a0e18" />
+        </svg>
+      </div>
+      <p class="qr-caption">Scan to open<br>the live site</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- 9. CLOSING -->
-<section class="closing" id="s9">
-  <span class="sec-index">08</span>
-  <p class="eyebrow">See It Live</p>
-  <h2 class="reveal-line"><span>Discover Egypt.</span></h2>
-  <h2 class="reveal-line"><span><span class="gold-word">Live</span> the story.</span></h2>
-  <p class="tagline">— Egypt 360</p>
-  <div class="cta-row">
-    <a href="https://ommarhassan.github.io/-TEAM_F09/" class="cta-btn" id="liveLink" target="_blank" rel="noopener">View the live site</a>
-  </div>
-  <p class="closing-foot">Thank you</p>
+  <script>
+    // Loading screen — show the E emblem until its animation finishes, then reveal the site
+    (function () {
+      const loader = document.getElementById('cinematicLoader');
+      const htmlEl = document.documentElement;
+      const ANIM_TOTAL_MS = 5000; // matches heroPulse/caption/rule animation timeline
+      const shownAt = Date.now();
+      let hidden = false;
 
-  <div class="qr-block">
-    <div class="qr-card">
-      <svg viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2,2H3V3H2zM3,2H4V3H3zM4,2H5V3H4zM5,2H6V3H5zM6,2H7V3H6zM7,2H8V3H7zM8,2H9V3H8zM11,2H12V3H11zM12,2H13V3H12zM13,2H14V3H13zM14,2H15V3H14zM16,2H17V3H16zM21,2H22V3H21zM24,2H25V3H24zM25,2H26V3H25zM26,2H27V3H26zM27,2H28V3H27zM28,2H29V3H28zM29,2H30V3H29zM30,2H31V3H30zM2,3H3V4H2zM8,3H9V4H8zM14,3H15V4H14zM15,3H16V4H15zM16,3H17V4H16zM17,3H18V4H17zM19,3H20V4H19zM20,3H21V4H20zM22,3H23V4H22zM24,3H25V4H24zM30,3H31V4H30zM2,4H3V5H2zM4,4H5V5H4zM5,4H6V5H5zM6,4H7V5H6zM8,4H9V5H8zM11,4H12V5H11zM12,4H13V5H12zM13,4H14V5H13zM14,4H15V5H14zM17,4H18V5H17zM19,4H20V5H19zM20,4H21V5H20zM24,4H25V5H24zM26,4H27V5H26zM27,4H28V5H27zM28,4H29V5H28zM30,4H31V5H30zM2,5H3V6H2zM4,5H5V6H4zM5,5H6V6H5zM6,5H7V6H6zM8,5H9V6H8zM11,5H12V6H11zM13,5H14V6H13zM14,5H15V6H14zM18,5H19V6H18zM20,5H21V6H20zM24,5H25V6H24zM26,5H27V6H26zM27,5H28V6H27zM28,5H29V6H28zM30,5H31V6H30zM2,6H3V7H2zM4,6H5V7H4zM5,6H6V7H5zM6,6H7V7H6zM8,6H9V7H8zM11,6H12V7H11zM13,6H14V7H13zM14,6H15V7H14zM15,6H16V7H15zM18,6H19V7H18zM19,6H20V7H19zM20,6H21V7H20zM24,6H25V7H24zM26,6H27V7H26zM27,6H28V7H27zM28,6H29V7H28zM30,6H31V7H30zM2,7H3V8H2zM8,7H9V8H8zM10,7H11V8H10zM11,7H12V8H11zM12,7H13V8H12zM14,7H15V8H14zM15,7H16V8H15zM16,7H17V8H16zM17,7H18V8H17zM18,7H19V8H18zM21,7H22V8H21zM24,7H25V8H24zM30,7H31V8H30zM2,8H3V9H2zM3,8H4V9H3zM4,8H5V9H4zM5,8H6V9H5zM6,8H7V9H6zM7,8H8V9H7zM8,8H9V9H8zM10,8H11V9H10zM12,8H13V9H12zM14,8H15V9H14zM16,8H17V9H16zM18,8H19V9H18zM20,8H21V9H20zM22,8H23V9H22zM24,8H25V9H24zM25,8H26V9H25zM26,8H27V9H26zM27,8H28V9H27zM28,8H29V9H28zM29,8H30V9H29zM30,8H31V9H30zM11,9H12V10H11zM13,9H14V10H13zM14,9H15V10H14zM17,9H18V10H17zM19,9H20V10H19zM21,9H22V10H21zM22,9H23V10H22zM2,10H3V11H2zM5,10H6V11H5zM7,10H8V11H7zM8,10H9V11H8zM10,10H11V11H10zM12,10H13V11H12zM15,10H16V11H15zM17,10H18V11H17zM18,10H19V11H18zM23,10H24V11H23zM25,10H26V11H25zM6,11H7V12H6zM9,11H10V12H9zM10,11H11V12H10zM11,11H12V12H11zM13,11H14V12H13zM16,11H17V12H16zM17,11H18V12H17zM18,11H19V12H18zM19,11H20V12H19zM20,11H21V12H20zM22,11H23V12H22zM24,11H25V12H24zM27,11H28V12H27zM30,11H31V12H30zM4,12H5V13H4zM5,12H6V13H5zM8,12H9V13H8zM9,12H10V13H9zM10,12H11V13H10zM13,12H14V13H13zM14,12H15V13H14zM15,12H16V13H15zM16,12H17V13H16zM18,12H19V13H18zM21,12H22V13H21zM22,12H23V13H22zM25,12H26V13H25zM26,12H27V13H26zM27,12H28V13H27zM28,12H29V13H28zM29,12H30V13H29zM2,13H3V14H2zM3,13H4V14H3zM4,13H5V14H4zM5,13H6V14H5zM7,13H8V14H7zM11,13H12V14H11zM12,13H13V14H12zM13,13H14V14H13zM14,13H15V14H14zM15,13H16V14H15zM17,13H18V14H17zM20,13H21V14H20zM23,13H24V14H23zM24,13H25V14H24zM28,13H29V14H28zM29,13H30V14H29zM2,14H3V15H2zM3,14H4V15H3zM4,14H5V15H4zM5,14H6V15H5zM8,14H9V15H8zM10,14H11V15H10zM13,14H14V15H13zM14,14H15V15H14zM15,14H16V15H15zM16,14H17V15H16zM18,14H19V15H18zM19,14H20V15H19zM21,14H22V15H21zM22,14H23V15H22zM23,14H24V15H23zM24,14H25V15H24zM27,14H28V15H27zM29,14H30V15H29zM30,14H31V15H30zM6,15H7V16H6zM10,15H11V16H10zM11,15H12V16H11zM14,15H15V16H14zM15,15H16V16H15zM17,15H18V16H17zM19,15H20V16H19zM21,15H22V16H21zM23,15H24V16H23zM2,16H3V17H2zM3,16H4V17H3zM4,16H5V17H4zM6,16H7V17H6zM8,16H9V17H8zM9,16H10V17H9zM12,16H13V17H12zM14,16H15V17H14zM15,16H16V17H15zM16,16H17V17H16zM20,16H21V17H20zM26,16H27V17H26zM27,16H28V17H27zM28,16H29V17H28zM29,16H30V17H29zM30,16H31V17H30zM2,17H3V18H2zM4,17H5V18H4zM5,17H6V18H5zM7,17H8V18H7zM9,17H10V18H9zM11,17H12V18H11zM12,17H13V18H12zM15,17H16V18H15zM16,17H17V18H16zM17,17H18V18H17zM18,17H19V18H18zM19,17H20V18H19zM22,17H23V18H22zM23,17H24V18H23zM26,17H27V18H26zM27,17H28V18H27zM29,17H30V18H29zM2,18H3V19H2zM3,18H4V19H3zM4,18H5V19H4zM6,18H7V19H6zM7,18H8V19H7zM8,18H9V19H8zM15,18H16V19H15zM16,18H17V19H16zM19,18H20V19H19zM20,18H21V19H20zM22,18H23V19H22zM23,18H24V19H23zM29,18H30V19H29zM5,19H6V20H5zM6,19H7V20H6zM7,19H8V20H7zM10,19H11V20H10zM11,19H12V20H11zM12,19H13V20H12zM13,19H14V20H13zM16,19H17V20H16zM17,19H18V20H17zM18,19H19V20H18zM19,19H20V20H19zM23,19H24V20H23zM24,19H25V20H24zM25,19H26V20H25zM27,19H28V20H27zM30,19H31V20H30zM2,20H3V21H2zM4,20H5V21H4zM5,20H6V21H5zM8,20H9V21H8zM10,20H11V21H10zM14,20H15V21H14zM15,20H16V21H15zM18,20H19V21H18zM19,20H20V21H19zM24,20H25V21H24zM25,20H26V21H25zM26,20H27V21H26zM29,20H30V21H29zM30,20H31V21H30zM11,21H12V22H11zM13,21H14V22H13zM15,21H16V22H15zM17,21H18V22H17zM19,21H20V22H19zM24,21H25V22H24zM26,21H27V22H26zM29,21H30V22H29zM30,21H31V22H30zM2,22H3V23H2zM6,22H7V23H6zM7,22H8V23H7zM8,22H9V23H8zM11,22H12V23H11zM12,22H13V23H12zM16,22H17V23H16zM22,22H23V23H22zM23,22H24V23H23zM24,22H25V23H24zM25,22H26V23H25zM26,22H27V23H26zM28,22H29V23H28zM10,23H11V24H10zM12,23H13V24H12zM14,23H15V24H14zM15,23H16V24H15zM17,23H18V24H17zM18,23H19V24H18zM21,23H22V24H21zM22,23H23V24H22zM26,23H27V24H26zM28,23H29V24H28zM29,23H30V24H29zM30,23H31V24H30zM2,24H3V25H2zM3,24H4V25H3zM4,24H5V25H4zM5,24H6V25H5zM6,24H7V25H6zM7,24H8V25H7zM8,24H9V25H8zM12,24H13V25H12zM13,24H14V25H13zM14,24H15V25H14zM15,24H16V25H15zM16,24H17V25H16zM18,24H19V25H18zM20,24H21V25H20zM22,24H23V25H22zM24,24H25V25H24zM26,24H27V25H26zM29,24H30V25H29zM2,25H3V26H2zM8,25H9V26H8zM10,25H11V26H10zM11,25H12V26H11zM13,25H14V26H13zM15,25H16V26H15zM17,25H18V26H17zM18,25H19V26H18zM20,25H21V26H20zM22,25H23V26H22zM26,25H27V26H26zM27,25H28V26H27zM28,25H29V26H28zM29,25H30V26H29zM2,26H3V27H2zM4,26H5V27H4zM5,26H6V27H5zM6,26H7V27H6zM8,26H9V27H8zM11,26H12V27H11zM12,26H13V27H12zM14,26H15V27H14zM16,26H17V27H16zM17,26H18V27H17zM18,26H19V27H18zM19,26H20V27H19zM22,26H23V27H22zM23,26H24V27H23zM24,26H25V27H24zM25,26H26V27H25zM26,26H27V27H26zM2,27H3V28H2zM4,27H5V28H4zM5,27H6V28H5zM6,27H7V28H6zM8,27H9V28H8zM10,27H11V28H10zM11,27H12V28H11zM12,27H13V28H12zM13,27H14V28H13zM16,27H17V28H16zM18,27H19V28H18zM21,27H22V28H21zM22,27H23V28H22zM24,27H25V28H24zM25,27H26V28H25zM26,27H27V28H26zM27,27H28V28H27zM28,27H29V28H28zM29,27H30V28H29zM2,28H3V29H2zM4,28H5V29H4zM5,28H6V29H5zM6,28H7V29H6zM8,28H9V29H8zM12,28H13V29H12zM13,28H14V29H13zM15,28H16V29H15zM23,28H24V29H23zM26,28H27V29H26zM27,28H28V29H27zM28,28H29V29H28zM30,28H31V29H30zM2,29H3V30H2zM8,29H9V30H8zM12,29H13V30H12zM13,29H14V30H13zM14,29H15V30H14zM15,29H16V30H15zM18,29H19V30H18zM19,29H20V30H19zM20,29H21V30H20zM22,29H23V30H22zM23,29H24V30H23zM26,29H27V30H26zM29,29H30V30H29zM2,30H3V31H2zM3,30H4V31H3zM4,30H5V31H4zM5,30H6V31H5zM6,30H7V31H6zM7,30H8V31H7zM8,30H9V31H8zM10,30H11V31H10zM11,30H12V31H11zM16,30H17V31H16zM17,30H18V31H17zM19,30H20V31H19zM20,30H21V31H20zM22,30H23V31H22zM23,30H24V31H23zM24,30H25V31H24zM25,30H26V31H25zM27,30H28V31H27zM29,30H30V31H29z" fill="#0a0e18"/>
-      </svg>
-    </div>
-    <p class="qr-caption">Scan to open<br>the live site</p>
-  </div>
-</section>
-
-<script>
-  // Reveal on scroll
-  const sections = document.querySelectorAll('section');
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){ e.target.classList.add('in-view'); }
-    });
-  }, { threshold: 0.32 });
-  sections.forEach(s=>io.observe(s));
-
-  // Dot nav build
-  const dotnav = document.getElementById('dotnav');
-  const labels = ['Hook','Problem','Solution','Objectives','Audience','Design','Tech','Future','Closing'];
-  sections.forEach((s,i)=>{
-    const b = document.createElement('button');
-    b.dataset.label = (i+1).toString().padStart(2,'0') + ' — ' + labels[i];
-    b.addEventListener('click', ()=> s.scrollIntoView({behavior:'smooth'}));
-    dotnav.appendChild(b);
-  });
-  const dots = dotnav.querySelectorAll('button');
-  let currentIndex = 0;
-  const navIo = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const idx = Array.from(sections).indexOf(e.target);
-        currentIndex = idx;
-        dots.forEach(d=>d.classList.remove('active'));
-        dots[idx].classList.add('active');
-        stepUp.disabled = idx === 0;
-        stepDown.disabled = idx === sections.length - 1;
+      function hideLoader() {
+        if (hidden) return;
+        hidden = true;
+        loader.classList.add('loader-hide');
+        htmlEl.classList.remove('is-loading');
+        setTimeout(() => loader.remove(), 850);
       }
+
+      function hideWhenReady() {
+        const elapsed = Date.now() - shownAt;
+        const wait = Math.max(0, ANIM_TOTAL_MS - elapsed);
+        setTimeout(hideLoader, wait);
+      }
+
+      if (document.readyState === 'complete') {
+        hideWhenReady();
+      } else {
+        window.addEventListener('load', hideWhenReady);
+      }
+    })();
+
+    // Reveal on scroll
+    const sections = document.querySelectorAll('section');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); }
+      });
+    }, { threshold: 0.32 });
+    sections.forEach(s => io.observe(s));
+
+    // Dot nav build
+    const dotnav = document.getElementById('dotnav');
+    const labels = ['Hook', 'Problem', 'Solution', 'Objectives', 'Audience', 'Design', 'Tech', 'Future', 'Closing'];
+    sections.forEach((s, i) => {
+      const b = document.createElement('button');
+      b.dataset.label = (i + 1).toString().padStart(2, '0') + ' — ' + labels[i];
+      b.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }));
+      dotnav.appendChild(b);
     });
-  }, { threshold: 0.5 });
-  sections.forEach(s=>navIo.observe(s));
+    const dots = dotnav.querySelectorAll('button');
+    let currentIndex = 0;
+    const navIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const idx = Array.from(sections).indexOf(e.target);
+          currentIndex = idx;
+          dots.forEach(d => d.classList.remove('active'));
+          dots[idx].classList.add('active');
+          stepUp.disabled = idx === 0;
+          stepDown.disabled = idx === sections.length - 1;
+        }
+      });
+    }, { threshold: 0.5 });
+    sections.forEach(s => navIo.observe(s));
 
-  // Step nav (prev/next) — works with the hero's expand/collapse lock too
-  const stepUp = document.getElementById('stepUp');
-  const stepDown = document.getElementById('stepDown');
+    // Step nav (prev/next) — works with the hero's expand/collapse lock too
+    const stepUp = document.getElementById('stepUp');
+    const stepDown = document.getElementById('stepDown');
 
-  function goToSection(index){
-    index = Math.max(0, Math.min(sections.length - 1, index));
-    const target = sections[index];
+    function goToSection(index) {
+      index = Math.max(0, Math.min(sections.length - 1, index));
+      const target = sections[index];
 
-    if(target.id === 's1'){
-      if(window.heroControl) window.heroControl.collapse();
-      window.scrollTo({ top:0, behavior:'smooth' });
-      return;
-    }
-    if(window.heroControl && !window.heroControl.isExpanded()){
-      window.heroControl.expand();
-      requestAnimationFrame(()=> requestAnimationFrame(()=> target.scrollIntoView({ behavior:'smooth' })));
-    } else {
-      target.scrollIntoView({ behavior:'smooth' });
-    }
-  }
-
-  stepUp.addEventListener('click', ()=> goToSection(currentIndex - 1));
-  stepDown.addEventListener('click', ()=> goToSection(currentIndex + 1));
-
-  window.addEventListener('keydown', (e)=>{
-    if(['ArrowDown','PageDown'].includes(e.key)){ e.preventDefault(); goToSection(currentIndex + 1); }
-    else if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); goToSection(currentIndex - 1); }
-  });
-
-  // Progress bar
-  const progress = document.getElementById('progress');
-  window.addEventListener('scroll', ()=>{
-    const h = document.documentElement;
-    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
-    progress.style.width = scrolled + '%';
-  });
-
-  // ---------- Scroll-to-expand hero ----------
-  (function(){
-    const media   = document.getElementById('heroMedia');
-    const bg      = document.getElementById('heroBg');
-    const wordL   = document.getElementById('wordLeft');
-    const wordR   = document.getElementById('wordRight');
-    const hint    = document.getElementById('heroHint');
-    const reveal  = document.getElementById('heroReveal');
-    const htmlEl  = document.documentElement;
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = () => window.innerWidth < 768;
-
-    let progress = 0;
-    let expanded = false;
-    let touchStartY = 0;
-
-    function render(){
-      const w = 300 + progress * (isMobile() ? 480 : 1080);
-      const h = 380 + progress * (isMobile() ? 260 : 420);
-      media.style.width  = Math.min(w, window.innerWidth * 0.95) + 'px';
-      media.style.height = Math.min(h, window.innerHeight * 0.85) + 'px';
-
-      const shift = progress * (isMobile() ? 70 : 150);
-      wordL.style.transform = `translateX(-${shift}px)`;
-      wordR.style.transform = `translateX(${shift}px)`;
-
-      bg.style.opacity = 1 - progress * 0.9;
-      hint.style.opacity = progress > 0.06 ? 0 : 1;
+      if (target.id === 's1') {
+        if (window.heroControl) window.heroControl.collapse();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      if (window.heroControl && !window.heroControl.isExpanded()) {
+        window.heroControl.expand();
+        requestAnimationFrame(() => requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth' })));
+      } else {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
     }
 
-    function setProgress(p){
-      progress = Math.min(Math.max(p, 0), 1);
+    stepUp.addEventListener('click', () => goToSection(currentIndex - 1));
+    stepDown.addEventListener('click', () => goToSection(currentIndex + 1));
+
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowDown', 'PageDown'].includes(e.key)) { e.preventDefault(); goToSection(currentIndex + 1); }
+      else if (['ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); goToSection(currentIndex - 1); }
+    });
+
+    // Progress bar
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      progress.style.width = scrolled + '%';
+    });
+
+    // ---------- Scroll-to-expand hero ----------
+    (function () {
+      const media = document.getElementById('heroMedia');
+      const bg = document.getElementById('heroBg');
+      const wordL = document.getElementById('wordLeft');
+      const wordR = document.getElementById('wordRight');
+      const hint = document.getElementById('heroHint');
+      const reveal = document.getElementById('heroReveal');
+      const htmlEl = document.documentElement;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isMobile = () => window.innerWidth < 768;
+
+      let progress = 0;
+      let expanded = false;
+      let touchStartY = 0;
+
+      function render() {
+        const w = 300 + progress * (isMobile() ? 480 : 1080);
+        const h = 380 + progress * (isMobile() ? 260 : 420);
+        media.style.width = Math.min(w, window.innerWidth * 0.95) + 'px';
+        media.style.height = Math.min(h, window.innerHeight * 0.85) + 'px';
+
+        const shift = progress * (isMobile() ? 70 : 150);
+        wordL.style.transform = `translateX(-${shift}px)`;
+        wordR.style.transform = `translateX(${shift}px)`;
+
+        bg.style.opacity = 1 - progress * 0.9;
+        hint.style.opacity = progress > 0.06 ? 0 : 1;
+      }
+
+      function setProgress(p) {
+        progress = Math.min(Math.max(p, 0), 1);
+        render();
+
+        if (progress >= 1 && !expanded) {
+          expanded = true;
+          reveal.classList.add('show');
+          htmlEl.classList.remove('hero-locked');
+        } else if (progress < 0.94 && expanded) {
+          expanded = false;
+          reveal.classList.remove('show');
+          htmlEl.classList.add('hero-locked');
+        }
+      }
+
+      if (prefersReduced) {
+        // Skip scroll-jacking entirely for reduced-motion users
+        expanded = true;
+        setProgress(1);
+      } else {
+        htmlEl.classList.add('hero-locked');
+
+        window.addEventListener('wheel', (e) => {
+          if (!expanded) {
+            e.preventDefault();
+            setProgress(progress + e.deltaY * 0.0011);
+          } else if (window.scrollY <= 4 && e.deltaY < 0) {
+            e.preventDefault();
+            setProgress(progress + e.deltaY * 0.0011);
+          }
+        }, { passive: false });
+
+        window.addEventListener('scroll', () => {
+          if (!expanded) { window.scrollTo(0, 0); }
+        });
+
+        window.addEventListener('touchstart', (e) => {
+          touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+          const y = e.touches[0].clientY;
+          const delta = touchStartY - y;
+          if (!expanded) {
+            e.preventDefault();
+            setProgress(progress + delta * 0.0055);
+            touchStartY = y;
+          } else if (window.scrollY <= 4 && delta < -14) {
+            e.preventDefault();
+            setProgress(progress + delta * 0.0055);
+            touchStartY = y;
+          }
+        }, { passive: false });
+      }
+
       render();
 
-      if(progress >= 1 && !expanded){
-        expanded = true;
-        reveal.classList.add('show');
-        htmlEl.classList.remove('hero-locked');
-      } else if(progress < 0.94 && expanded){
-        expanded = false;
-        reveal.classList.remove('show');
-        htmlEl.classList.add('hero-locked');
-      }
-    }
-
-    if(prefersReduced){
-      // Skip scroll-jacking entirely for reduced-motion users
-      expanded = true;
-      setProgress(1);
-    } else {
-      htmlEl.classList.add('hero-locked');
-
-      window.addEventListener('wheel', (e)=>{
-        if(!expanded){
-          e.preventDefault();
-          setProgress(progress + e.deltaY * 0.0011);
-        } else if(window.scrollY <= 4 && e.deltaY < 0){
-          e.preventDefault();
-          setProgress(progress + e.deltaY * 0.0011);
-        }
-      }, { passive:false });
-
-      window.addEventListener('scroll', ()=>{
-        if(!expanded){ window.scrollTo(0,0); }
-      });
-
-      window.addEventListener('touchstart', (e)=>{
-        touchStartY = e.touches[0].clientY;
-      }, { passive:false });
-
-      window.addEventListener('touchmove', (e)=>{
-        const y = e.touches[0].clientY;
-        const delta = touchStartY - y;
-        if(!expanded){
-          e.preventDefault();
-          setProgress(progress + delta * 0.0055);
-          touchStartY = y;
-        } else if(window.scrollY <= 4 && delta < -14){
-          e.preventDefault();
-          setProgress(progress + delta * 0.0055);
-          touchStartY = y;
-        }
-      }, { passive:false });
-    }
-
-    render();
-
-    window.heroControl = {
-      isExpanded: ()=> expanded,
-      expand: ()=> setProgress(1),
-      collapse: ()=> setProgress(0)
-    };
-  })();
-</script>
+      window.heroControl = {
+        isExpanded: () => expanded,
+        expand: () => setProgress(1),
+        collapse: () => setProgress(0)
+      };
+    })();
+  </script>
 
 </body>
+
 </html>
